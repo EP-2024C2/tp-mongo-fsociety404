@@ -1,0 +1,31 @@
+### Obtener fabricantes
+GET http://localhost:3000/fabricantes
+
+### Obtener fabricante por id
+GET http://localhost:3000/fabricantes/:id
+
+### Crear un fabricante
+POST http://localhost:3000/fabricantes
+
+{
+    "nombre" :"fab1",
+    "direccion" : "direccion1",
+    "numeroContacto" : "12312312",
+    "pathImgPerfil": "fabricantes1.jpg"
+}
+
+### Modificar un fabricante
+PUT http://localhost:3000/fabricantes/:id
+
+{
+    "nombre" :"fab1 ",
+    "direccion" : "direccion123",
+    "numeroContacto" : "12312312",
+    "pathImgPerfil": "fabricantes1.jpg"
+}
+
+### Eliminar un fabricante
+DELETE http://localhost:3000/fabricantes/:id
+
+### Obtener productos de un fabricante
+GET http://localhost:3000/fabricantes/:id/productos
