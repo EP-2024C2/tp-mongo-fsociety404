@@ -1,0 +1,27 @@
+### Obtener componentes
+GET http://localhost:3000/componentes
+
+### Obtener componente por id
+GET http://localhost:3000/componentes/:id
+
+### Crear un componente
+POST http://localhost:3000/componentes
+    
+    {
+        "nombre" :"comp1",
+        "descripcion" : "descripcion1",
+    }
+
+### Modificar un componente
+PUT http://localhost:3000/componentes/:id
+    
+    {
+        "nombre" :"comp1 ",
+        "descripcion" : "descripcion123",
+    }
+
+### Eliminar un componente
+DELETE http://localhost:3000/componentes/:id
+
+### Obtener productos de un componente
+GET http://localhost:3000/componentes/:id/productos

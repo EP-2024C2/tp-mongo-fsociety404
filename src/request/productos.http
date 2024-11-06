@@ -1,0 +1,39 @@
+### Obtener todos los productos
+GET http://localhost:3000/productos
+
+### Obtener producto por id
+GET http://localhost:3000/productos/:id
+
+### Crear un producto
+POST http://localhost:3000/productos
+{
+    "nombre":"nombre1",
+    "precio": 150
+}
+
+### Modificar un producto
+PUT http://localhost:3000/productos/:id
+{
+    "nombre":"nombre1",
+    "precio": 200
+}
+
+### Eliminar un producto
+DELETE http://localhost:3000/productos/:id
+
+### Crear un fabricante para un producto
+POST  http://localhost:3000/productos/:id/fabricantes
+
+    ###especificar asosiacion
+
+
+## Obtener fabricantes de un producto
+GET http://localhost:3000/productos/:id/fabricantes
+
+### Crear un componente para un producto
+POST http://localhost:3000/productos/:id/componentes
+
+    ###especificar asosiacion
+
+## Obtener componentes de un producto
+GET http://localhost:3000/productos/:id/componentes
