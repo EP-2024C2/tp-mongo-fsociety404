@@ -1,5 +1,4 @@
 const { Producto, Fabricante, Componente } = require('../models')
-const mongoose = require('mongoose');
 
 const controller = {}
 
@@ -84,26 +83,22 @@ controller.associateFabricanteAProductoById = async (req, res) => {
 
     const fabricantesALiberar = await producto.fabricantes.filter(f => !fabricantes.some((p)=> f._id.equals(p) ));
     const fabricantesAAgregar = await fabricantes.filter(p => !producto.fabricantes.some((f)=> f._id.equals(p) ));
-    // // console.log(producto.fabricantes, fabricantes, fabricantesALiberar)
-    // const session = await mongoose.startSession();
-    // session.startTransaction();
     try {
 
-        // liberamos los fabricants
+        // liberamos los fabricantes
         for (const idFabricante of fabricantesALiberar) {
             console.log(idFabricante)
             await Fabricante.updateOne(
                 { _id: idFabricante },
                 { $pull: { productos: producto._id } },
-                // { session }
               );            
               await Producto.updateOne(
                 { _id: producto._id },
                 { $pull: { fabricantes: idFabricante } },
-                // { session }
               );            
         }
 
+        // asignamos fabricantes
         for (const idFabricante of fabricantesAAgregar) {
 
             const fabricante = await Fabricante.findById(idFabricante)
@@ -118,17 +113,11 @@ controller.associateFabricanteAProductoById = async (req, res) => {
             producto.fabricantes.push(idFabricante)
         }
         await producto.save()
-        // await producto.save({session})
-        // await session.commitTransaction();        
-        console.log("se asignaron los fabricantes al producto")
     } catch (err) {
         const msg = `error al asignar fabricantes a un producto: '${err}'`
         console.error(msg)
         return res.status(500).json({ error: msg })
-    } finally { 
-        // session.endSession()
-
-    }
+    } 
 
     res.status(200).json({ message: 'OK' });
 }
@@ -162,30 +151,51 @@ controller.deleteAllFabricatesDeProducto = async (req, res) => {
 
 // asigna componentes a un producto
 controller.associateComponenteAProductoById = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });
-    // const producto = req.modelo || await Producto.findByPk(req.params.id);
+    const producto = req.modelo || await Producto.findById(req.params.id);
 
-    // const componentes = req.body;
-    // if (!Array.isArray(componentes)) {
-    //     return res.status(500).json({ error: `se espera una lista de componentes` })
-    // }
-    // for (const i in componentes) {
-    //     const componente = await Componente.findByPk(componentes[i].id)
-    //     if (!componente) {
-    //         return res.status(404).json({ error: `no se encontró un componente con el id '${componentes[i].id}'` });
-    //     }
-    //     componentes[i] = componente
-    // }
+    const componentes = req.body;
+    if (!Array.isArray(componentes)) {
+        return res.status(500).json({ error: `se espera una lista de IDs de componentes` })
+    }
 
-    // try {
-    //     producto.addComponentes(componentes)
-    // } catch (err) {
-    //     const msg = `error al asignar componentes a un producto: '${err}'`
-    //     console.error(msg)
-    //     return res.status(500).json({ error: msg })
-    // }
+    const componentesALiberar = await producto.componentes.filter(f => !componentes.some((p)=> f._id.equals(p) ));
+    const componentesAAgregar = await componentes.filter(p => !producto.componentes.some((f)=> f._id.equals(p) ));
+    try {
 
-    // res.status(200).json({ message: 'OK' });
+        // liberamos los componentes
+        for (const idComponente of componentesALiberar) {
+            console.log(idComponente)
+            await Componente.updateOne(
+                { _id: idComponente },
+                { $pull: { productos: producto._id } },
+              );            
+              await Producto.updateOne(
+                { _id: producto._id },
+                { $pull: { componentes: idComponente } },
+              );            
+        }
+
+        // asignamos componentes
+        for (const idComponente of componentesAAgregar) {
+
+            const componente = await Componente.findById(idComponente)
+            if (!componente) {
+                return res.status(404).json({ error: `no se encontró un componente con el id '${idComponente}'` });
+            }
+
+            componente.productos.push(producto._id)
+            await componente.save()
+
+            producto.componentes.push(idComponente)
+        }
+        await producto.save()
+    } catch (err) {
+        const msg = `error al asignar componentes a un producto: '${err}'`
+        console.error(msg)
+        return res.status(500).json({ error: msg })
+    } 
+
+    res.status(200).json({ message: 'OK' });
 }
 
 // obtiene los componentes de un producto
