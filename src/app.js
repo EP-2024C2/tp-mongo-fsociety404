@@ -4,6 +4,7 @@ const process = require('process')
 
 const express = require('express')
 const rutas = require('./routes')
+const mongodb = require('./db/server')
 
 
 const app = express()

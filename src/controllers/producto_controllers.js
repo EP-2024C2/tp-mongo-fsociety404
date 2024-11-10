@@ -3,62 +3,54 @@ const controller = {}
 
 //obtener tods los productos
 controller.getAllProductos = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
-    // try {
-    //     const productos = await Producto.findAll();
-    //     res.status(200).json(productos);
-    // } catch (error) {
-    //     res.status(500).json({ error: error.message });
-    // }
+    try {
+        const productos = await Producto.find();
+        res.status(200).json(productos);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 }
 
 //obtener productos por id
 controller.getProductoById = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
-    // const producto = req.modelo || await Producto.findByPk(req.params.id);
-    // res.status(200).json(producto);
+    const producto = req.modelo || await Producto.findById(req.params.id);
+    res.status(200).json(producto);
 }
 
 //crear un producto
 controller.addProducto = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
-    // const producto = req.body;
-    // try {
-    //     const resultado = await Producto.create({
-    //         nombre: producto.nombre,
-    //         descripcion: producto.descripcion,
-    //         precio: producto.precio,
-    //         pathImg: producto.pathImg
-    //     })
-    //     res.status(201).send(resultado)
 
-    // } catch (error) {
-    //     res.status(500).json({ error: `error al intentar crear Producto: "${error}"` })
-    // }
+    const productoData = req.body;
+    try {
+        const producto = new Producto(productoData)
+        await producto.save()
+        res.status(201).send(producto)
+
+    } catch (error) {
+        res.status(500).json({ error: `error al intentar crear Producto: "${error}"` })
+    }
 }
 
 //modificar los datos de un producto en particular
 controller.updateProducto = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
-    // const productoActualizado = req.body;
-    // try {
-    //     await Producto.update({
-    //         nombre: productoActualizado.nombre,
-    //         descripcion: productoActualizado.descripcion,
-    //         precio: productoActualizado.precio,
-    //         pathImg: productoActualizado.pathImg
-    //     }, { where: { id: req.params.id } })
-    //     const productoModificado = await Producto.findByPk(req.params.id);
-    //     res.status(200).json(productoModificado)
 
-    // } catch (error) {
-    //     res.status(500).json({ error: `error al intentar actualizar Producto: "${error}"` })
-    // }
+    const { nombre, descripcion, precio, pathImg } = req.body;
+    try {
+        const producto = await Producto.findByIdAndUpdate(req.params.id, {
+            nombre,
+            descripcion,
+            precio,
+            pathImg
+        },{new:true});
+        res.status(200).json(producto)
+
+    } catch (error) {
+        res.status(500).json({ error: `error al intentar actualizar Producto: "${error}"` })
+    }
 }
 
 //borrar un producto en particular
 controller.deleteProducto = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
     // const modelo = req.modelo || await Producto.findByPk(req.params.id);
     // const cantComponentesAsociados = await modelo.countComponentes()
     // if(cantComponentesAsociados > 0) {
@@ -71,17 +63,17 @@ controller.deleteProducto = async (req, res) => {
     //     return
     // }
 
-    // try {
-    //     await Producto.destroy({ where: { id: req.params.id } });
-    //     res.status(200).json({ message: 'OK' });
-    // } catch (error) {
-    //     res.status(500).json({ error: error.message });
-    // }
+    try {
+        await Producto.findByIdAndDelete( req.params.id);
+        res.status(200).json({ message: 'OK' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 }
 
 // asigna fabricante a un producto
 controller.associateFabricanteAProductoById = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
+    res.status(501).json({ error: "no implementado" });
     // const producto = req.modelo || await Producto.findByPk(req.params.id);
 
     // const fabricantes = req.body;
@@ -108,7 +100,7 @@ controller.associateFabricanteAProductoById = async (req, res) => {
 
 // obtiene los fabricantes de un producto
 controller.getAllFabricantesDeProducto = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
+    res.status(501).json({ error: "no implementado" });
     // const idProducto = req.params.id
     // const producto = await Producto.findByPk(idProducto, {
     //     include: { model: Fabricante, as: "Fabricantes" }
@@ -118,7 +110,7 @@ controller.getAllFabricantesDeProducto = async (req, res) => {
 
 // elimina la asociacion de fabricantes de un producto
 controller.deleteAllFabricatesDeProducto = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
+    res.status(501).json({ error: "no implementado" });
     // const modelo = req.modelo || await Producto.findByPk(req.params.id);
     // try {
     //     await modelo.setFabricantes([])
@@ -134,7 +126,7 @@ controller.deleteAllFabricatesDeProducto = async (req, res) => {
 
 // asigna componentes a un producto
 controller.associateComponenteAProductoById = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
+    res.status(501).json({ error: "no implementado" });
     // const producto = req.modelo || await Producto.findByPk(req.params.id);
 
     // const componentes = req.body;
@@ -162,7 +154,7 @@ controller.associateComponenteAProductoById = async (req, res) => {
 
 // obtiene los componentes de un producto
 controller.getAllComponentesDeProducto = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
+    res.status(501).json({ error: "no implementado" });
     // const idProducto = req.params.id
     // const producto = await Producto.findByPk(idProducto, {
     //     include: { model: Componente, as: "Componentes" }
@@ -173,7 +165,7 @@ controller.getAllComponentesDeProducto = async (req, res) => {
 
 // elimina la asociacion de componentes de un producto
 controller.deleteAllComponentesDeProducto = async (req, res) => {
-    res.status(501).json({ error : "no implementado" });
+    res.status(501).json({ error: "no implementado" });
     // const modelo = req.modelo || await Producto.findByPk(req.params.id);
     // try {
     //     await modelo.setComponentes([])

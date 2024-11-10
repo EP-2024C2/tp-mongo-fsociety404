@@ -15,7 +15,7 @@ const productoSchema = Joi.object().keys({
 		"number.base": "El campo precio debe ser un número",
 		"any.required": "El campo precio es requerido"
 	}),
-	pathImg: Joi.string().uri().messages({
+	pathImg: Joi.string().messages({
 		"string.uri": "El campo pathImg debe ser una URL válida",
 	})
 });

@@ -10,7 +10,7 @@ POST http://localhost:3000/fabricantes
 {
     "nombre" :"fab1",
     "direccion" : "direccion1",
-    "numeroContacto" : "12312312",
+    "nroContacto" : "12312312",
     "pathImgPerfil": "fabricantes1.jpg"
 }
 
