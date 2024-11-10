@@ -1,4 +1,6 @@
 const { Producto, Fabricante, Componente } = require('../models')
+const mongoose = require('mongoose');
+
 const controller = {}
 
 //obtener tods los productos
@@ -73,34 +75,68 @@ controller.deleteProducto = async (req, res) => {
 
 // asigna fabricante a un producto
 controller.associateFabricanteAProductoById = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });
-    // const producto = req.modelo || await Producto.findByPk(req.params.id);
+    const producto = req.modelo || await Producto.findById(req.params.id);
 
-    // const fabricantes = req.body;
-    // if (!Array.isArray(fabricantes)) {
-    //     return res.status(500).json({ error: `se espera una lista de fabricantes` })
-    // }
-    // for (const i in fabricantes) {
-    //     const fabricante = await Fabricante.findByPk(fabricantes[i].id)
-    //     if (!fabricante) {
-    //         return res.status(404).json({ error: `no se encontró un fabricante con el id '${fabricantes[i].id}'` });
-    //     }
-    //     fabricantes[i] = fabricante
-    // }
-    // try {
-    //     producto.addFabricantes(fabricantes)
-    // } catch (err) {
-    //     const msg = `error al asignar fabricantes a un producto: '${err}'`
-    //     console.error(msg)
-    //     return res.status(500).json({ error: msg })
-    // }
-    // res.status(200).json({ message: 'OK' });
+    const fabricantes = req.body;
+    if (!Array.isArray(fabricantes)) {
+        return res.status(500).json({ error: `se espera una lista de IDs de fabricantes` })
+    }
+
+    const fabricantesALiberar = await producto.fabricantes.filter(f => !fabricantes.some((p)=> f._id.equals(p) ));
+    const fabricantesAAgregar = await fabricantes.filter(p => !producto.fabricantes.some((f)=> f._id.equals(p) ));
+    // // console.log(producto.fabricantes, fabricantes, fabricantesALiberar)
+    // const session = await mongoose.startSession();
+    // session.startTransaction();
+    try {
+
+        // liberamos los fabricants
+        for (const idFabricante of fabricantesALiberar) {
+            console.log(idFabricante)
+            await Fabricante.updateOne(
+                { _id: idFabricante },
+                { $pull: { productos: producto._id } },
+                // { session }
+              );            
+              await Producto.updateOne(
+                { _id: producto._id },
+                { $pull: { fabricantes: idFabricante } },
+                // { session }
+              );            
+        }
+
+        for (const idFabricante of fabricantesAAgregar) {
+
+            const fabricante = await Fabricante.findById(idFabricante)
+            if (!fabricante) {
+                return res.status(404).json({ error: `no se encontró un fabricante con el id '${idFabricante}'` });
+            }
+
+
+            fabricante.productos.push(producto._id)
+            await fabricante.save()
+
+            producto.fabricantes.push(idFabricante)
+        }
+        await producto.save()
+        // await producto.save({session})
+        // await session.commitTransaction();        
+        console.log("se asignaron los fabricantes al producto")
+    } catch (err) {
+        const msg = `error al asignar fabricantes a un producto: '${err}'`
+        console.error(msg)
+        return res.status(500).json({ error: msg })
+    } finally { 
+        // session.endSession()
+
+    }
+
+    res.status(200).json({ message: 'OK' });
 }
 
 
 // obtiene los fabricantes de un producto
 controller.getAllFabricantesDeProducto = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });
+    const producto = req.modelo || await Producto.findById(req.params.id);
     // const idProducto = req.params.id
     // const producto = await Producto.findByPk(idProducto, {
     //     include: { model: Fabricante, as: "Fabricantes" }

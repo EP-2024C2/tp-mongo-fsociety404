@@ -4,7 +4,8 @@ const {Schema, model} = mongoose;
 
 const componente = new Schema({
     nombre:{type: String, required: true},
-    descripcion:{type: String}
+    descripcion:{type: String},
+    productos: [{ type: Schema.Types.ObjectId, ref: 'Productos', required: true }],
 })
 
 
