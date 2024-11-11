@@ -1,5 +1,8 @@
 const { Fabricante, Producto } = require('../models')
 const controller = {}
+const mongoose = require('../db/server').mongoose;
+
+
 
 // obtiene todos los fabricantes
 controller.getAllFabricantes = async (req, res) => {
@@ -21,9 +24,9 @@ controller.getFabricanteById = async (req, res) => {
 controller.addFabricante = async (req, res) => {
     const fabricanteData = req.body;
     try {
-        const fab = new Fabricante(fabricanteData)
-        await fab.save()
-        res.status(201).send(fab)
+        const fabricante = new Fabricante(fabricanteData)
+        await fabricante.save()
+        res.status(201).send(fabricante)
 
     } catch (error) {
         res.status(500).json({ error: `error al intentar crear: "${error}"` })
@@ -60,7 +63,7 @@ controller.deleteFabricante = async (req, res) => {
     // }
 
     try {
-        await Fabricante.findByIdAndDelete( req.params.id );
+        await Fabricante.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'OK' });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -70,7 +73,7 @@ controller.deleteFabricante = async (req, res) => {
 
 // obtiene los productos de un fabricante
 controller.getAllProductosDeFabricante = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });
+    res.status(501).json({ error: "no implementado" });    
     // const idFabricante = req.params.id
     // const fabricante = await Fabricante.findByPk(idFabricante, {
     //     include: { model: Producto, as: "Productos" }

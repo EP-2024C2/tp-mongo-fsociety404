@@ -5,7 +5,7 @@ const controller = {}
 //obtener tods los productos
 controller.getAllProductos = async (req, res) => {
     try {
-        const productos = await Producto.find();
+        const productos = await Producto.find({});
         res.status(200).json(productos);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -42,7 +42,7 @@ controller.updateProducto = async (req, res) => {
             descripcion,
             precio,
             pathImg
-        },{new:true});
+        }, { new: true });
         res.status(200).json(producto)
 
     } catch (error) {
@@ -65,7 +65,7 @@ controller.deleteProducto = async (req, res) => {
     // }
 
     try {
-        await Producto.findByIdAndDelete( req.params.id);
+        await Producto.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'OK' });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -81,8 +81,8 @@ controller.associateFabricanteAProductoById = async (req, res) => {
         return res.status(500).json({ error: `se espera una lista de IDs de fabricantes` })
     }
 
-    const fabricantesALiberar = await producto.fabricantes.filter(f => !fabricantes.some((p)=> f._id.equals(p) ));
-    const fabricantesAAgregar = await fabricantes.filter(p => !producto.fabricantes.some((f)=> f._id.equals(p) ));
+    const fabricantesALiberar =  producto.fabricantes.filter(f => !fabricantes.some((p) => f._id.equals(p)));
+    const fabricantesAAgregar =  fabricantes.filter(p => !producto.fabricantes.some((f) => f._id.equals(p)));
     try {
 
         // liberamos los fabricantes
@@ -91,11 +91,11 @@ controller.associateFabricanteAProductoById = async (req, res) => {
             await Fabricante.updateOne(
                 { _id: idFabricante },
                 { $pull: { productos: producto._id } },
-              );            
-              await Producto.updateOne(
+            );
+            await Producto.updateOne(
                 { _id: producto._id },
                 { $pull: { fabricantes: idFabricante } },
-              );            
+            );
         }
 
         // asignamos fabricantes
@@ -117,7 +117,7 @@ controller.associateFabricanteAProductoById = async (req, res) => {
         const msg = `error al asignar fabricantes a un producto: '${err}'`
         console.error(msg)
         return res.status(500).json({ error: msg })
-    } 
+    }
 
     res.status(200).json({ message: 'OK' });
 }
@@ -125,7 +125,8 @@ controller.associateFabricanteAProductoById = async (req, res) => {
 
 // obtiene los fabricantes de un producto
 controller.getAllFabricantesDeProducto = async (req, res) => {
-    const producto = req.modelo || await Producto.findById(req.params.id);
+    res.status(501).json({ error: "no implementado" });
+    //const producto = req.modelo || await Producto.findById(req.params.id);
     // const idProducto = req.params.id
     // const producto = await Producto.findByPk(idProducto, {
     //     include: { model: Fabricante, as: "Fabricantes" }
@@ -158,8 +159,8 @@ controller.associateComponenteAProductoById = async (req, res) => {
         return res.status(500).json({ error: `se espera una lista de IDs de componentes` })
     }
 
-    const componentesALiberar = await producto.componentes.filter(f => !componentes.some((p)=> f._id.equals(p) ));
-    const componentesAAgregar = await componentes.filter(p => !producto.componentes.some((f)=> f._id.equals(p) ));
+    const componentesALiberar = await producto.componentes.filter(f => !componentes.some((p) => f._id.equals(p)));
+    const componentesAAgregar = await componentes.filter(p => !producto.componentes.some((f) => f._id.equals(p)));
     try {
 
         // liberamos los componentes
@@ -168,11 +169,11 @@ controller.associateComponenteAProductoById = async (req, res) => {
             await Componente.updateOne(
                 { _id: idComponente },
                 { $pull: { productos: producto._id } },
-              );            
-              await Producto.updateOne(
+            );
+            await Producto.updateOne(
                 { _id: producto._id },
                 { $pull: { componentes: idComponente } },
-              );            
+            );
         }
 
         // asignamos componentes
@@ -193,7 +194,7 @@ controller.associateComponenteAProductoById = async (req, res) => {
         const msg = `error al asignar componentes a un producto: '${err}'`
         console.error(msg)
         return res.status(500).json({ error: msg })
-    } 
+    }
 
     res.status(200).json({ message: 'OK' });
 }

@@ -1,13 +1,19 @@
 'use strict';
 const mongoose = require('mongoose');
-const {Schema, model} = mongoose;
+const { Schema, model } = mongoose;
 
-const fabricante = new Schema({
-    nombre:{type:String, required: true},
-    direccion:{type:String, required: true},
-    nroContacto:{type:String, required: true},
-    pathImgPerfil:{type:String},
-    productos: [{ type: Schema.Types.ObjectId, ref: 'Productos', required: true }],
+const fabricanteSchema = new Schema({
+    nombre: { type: String, required: true },
+    direccion: { type: String, required: true },
+    nroContacto: { type: String, required: true },
+    pathImgPerfil: { type: String },
+    productos: [{ type: Schema.Types.ObjectId, ref: 'Producto', required: true }]
 })
 
-module.exports = model('Fabricante', fabricante)
+fabricanteSchema.set("toJSON", {
+    transform: (__v, ret) => {
+        delete ret.__v
+    }
+})
+
+module.exports = model('Fabricante', fabricanteSchema)

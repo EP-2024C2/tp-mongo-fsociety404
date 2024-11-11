@@ -2,6 +2,13 @@ const existsById = (Model) => {
     return async (req, res, next) => {
         const id = req.params.id
         const modelName = Model.modelName
+
+        if (id.length !== 24 ) {
+            return res.status(400).json({
+                message: `El id proporcionado para ${modelName} no es válido`
+            })
+        }
+        
         const model = await Model.findById(id)
         if (!model) {
             return res.status(404).json({

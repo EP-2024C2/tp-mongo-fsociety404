@@ -2,11 +2,14 @@
 const mongoose = require('mongoose');
 const {Schema, model} = mongoose;
 
-const componente = new Schema({
+const componenteSchema = new Schema({
     nombre:{type: String, required: true},
     descripcion:{type: String},
     productos: [{ type: Schema.Types.ObjectId, ref: 'Productos', required: true }],
 })
 
+componenteSchema.set("toJSON",{
+    transform: ( __v, ret) =>{
+        delete ret.__v} })
 
-module.exports = model('Componente', componente)
+module.exports = model('Componente', componenteSchema)
