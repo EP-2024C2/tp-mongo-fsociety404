@@ -125,13 +125,22 @@ controller.associateFabricanteAProductoById = async (req, res) => {
 
 // obtiene los fabricantes de un producto
 controller.getAllFabricantesDeProducto = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });
     //const producto = req.modelo || await Producto.findById(req.params.id);
     // const idProducto = req.params.id
     // const producto = await Producto.findByPk(idProducto, {
     //     include: { model: Fabricante, as: "Fabricantes" }
     // });
     // res.status(200).json(producto);
+    const idProducto = req.modelo || await Producto.findById(req.params.id);
+    const fabricantes = await idProducto.populate({
+        path: 'fabricantes',
+        select: '-productos' 
+    });
+
+    idProducto.componentes = undefined
+
+    res.status(200).json(fabricantes);
+
 }
 
 // elimina la asociacion de fabricantes de un producto
@@ -208,6 +217,7 @@ controller.getAllComponentesDeProducto = async (req, res) => {
     // });
 
     // res.status(200).json(producto);
+    
 }
 
 // elimina la asociacion de componentes de un producto

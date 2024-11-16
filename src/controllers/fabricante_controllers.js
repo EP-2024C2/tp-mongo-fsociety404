@@ -72,13 +72,19 @@ controller.deleteFabricante = async (req, res) => {
 
 
 // obtiene los productos de un fabricante
-controller.getAllProductosDeFabricante = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });    
+controller.getAllProductosDeFabricante = async (req, res) => { 
     // const idFabricante = req.params.id
     // const fabricante = await Fabricante.findByPk(idFabricante, {
     //     include: { model: Producto, as: "Productos" }
     // });
     // res.status(200).json(fabricante);
+    const idFabricante = req.modelo || await Fabricante.findById(req.params.id);
+    const productos = await idFabricante.populate({
+        path: 'productos',
+        select: '-fabricantes'
+    });
+
+    res.status(200).json(productos);
 }
 
 module.exports = controller

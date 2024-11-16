@@ -2,26 +2,29 @@
 GET http://localhost:3000/componentes
 
 ### Obtener componente por id
-GET http://localhost:3000/componentes/:id
+GET http://localhost:3000/componentes/6738fce4e969d57fabf6960c
 
 ### Crear un componente
 POST http://localhost:3000/componentes
-    
+Content-Type: application/json
+
     {
         "nombre" :"comp1",
-        "descripcion" : "descripcion1",
+        "descripcion" : "descripcion1"
     }
 
 ### Modificar un componente
-PUT http://localhost:3000/componentes/:id
+PUT http://localhost:3000/componentes/6738fce4e969d57fabf6960c
+Content-Type: application/json
     
     {
         "nombre" :"comp1 ",
-        "descripcion" : "descripcion123",
+        "descripcion" : "descripcion123"
     }
 
 ### Eliminar un componente
-DELETE http://localhost:3000/componentes/:id
+DELETE http://localhost:3000/componentes/6738fbaa7f17d27b9bf7caae
+Content-Type: application/json
 
 ### Obtener productos de un componente
 GET http://localhost:3000/componentes/:id/productos
