@@ -112,4 +112,13 @@ TIP: podés usar `docker compose logs -f api` para ver que está pasando
         ├── fabricante_schemas.js
         └── producto_schemas.js
 ```
+## Ramas
+### main 
+contiene los componentes y fabricantes son modelos referenciados para ajustarse a la tabla de endpoints del requerimiento
+-Ventajas: Es que permite utilizar un componentes en multiples productos
+
+### incrustado-referencia 
+contiene a los fabricantes como referencia y a los componentes incrustados dentro de producto. Se ajusta la tabla de endpoints al nuevo comportamiento
+-Ventajas: Facilita la creacion de componentes 
+
  
