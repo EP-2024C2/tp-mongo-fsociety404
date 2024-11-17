@@ -1,4 +1,5 @@
-const { Producto, Fabricante, Componente } = require('../models')
+const { Producto, Fabricante, Componente } = require('../models');
+const { description } = require('../schemas/producto_schemas');
 
 const controller = {}
 
@@ -220,33 +221,6 @@ controller.getAllComponentesDeProducto = async (req, res) => {
 
 }
 
-// elimina la asociacion de componentes de un producto
-controller.deleteAllComponentesDeProducto = async (req, res) => {
-    const producto = req.modelo || await Producto.findById(req.params.id);
-
-    try {
-        for (const idComponente of producto.componentes) {
-            await Componente.updateOne(
-                { _id: idComponente },
-                { $pull: { productos: producto._id } },
-            );
-            await Producto.updateOne(
-                { _id: producto._id },
-                { $pull: { componentes: idComponente } },
-            );
-        }
-    
-    } catch(e) {
-        return res.status(500).json({ error: `error al eliminar asociación: ${e}` })
-    }
-    res.status(200).json({ message: 'OK' });
-}
-
-
-controller.getComponenteById = async (req, res) => {
-    const componente = req.modelo || await Componente.findById(req.params.id);
-    res.status(200).json(componente);
-}
 
 controller.addComponente = async (req, res) => {
 
@@ -254,8 +228,8 @@ controller.addComponente = async (req, res) => {
     try {
         const producto = await Producto.findByIdAndUpdate(
             productoId,
-            { $push: { componentes: req.body } },  // Agrega el nuevo componente al array de componentes
-            { new: true }  // Para devolver el documento actualizado
+            { $push: { componentes: req.body } },  
+            { new: true }  
         )
         res.status(201).json(producto.componentes[producto.componentes.length - 1])
     } catch (error) {
@@ -264,44 +238,49 @@ controller.addComponente = async (req, res) => {
 }
 
 
-controller.updateComponente = async (req, res) => { //NO
-    // const { nombre, descripcion } = req.body;
-
-    // try {
-    //     const componente = await Componente.findByIdAndUpdate(req.params.id, {
-    //         nombre,
-    //         descripcion
-    //     }, { new: true });
-    //     res.status(200).json(componente)
-
-    // } catch (error) {
-    //     res.status(500).json({ error: `error al intentar actualizar Componente: "${error}"` })
-    // }
-    const productoId = req.params.id; // ID del producto
-    const componenteId = req.params.idComponente; // ID del componente
+controller.updateComponente = async (req, res) => { 
+    const componenteId = req.params.idComponente; 
+    const producto = req.modelo || await Producto.findById(req.params.id);
+    const {nombre, descripcion} = req.body
 
     try {
-        // Encuentra el producto y actualiza el componente
-        const producto = await Producto.findOneAndUpdate(
-            { _id: productoId, "componentes._id": componenteId }, // Filtro
-            { $set: { "componentes.$": req.body } }, // Actualización del componente
-            { new: true } // Devuelve el documento actualizado
-        );
+        const componenteDeProducto = producto.componentes.id(componenteId)
 
-        // Verifica si el producto o componente no fueron encontrados
-        if (!producto) {
-            return res.status(404).json({ mensaje: 'Producto o componente no encontrado' });
+        if (!componenteDeProducto) {
+            return res.status(404).json({ mensaje: 'no se encontro el componente del producto' });
         }
+        componenteDeProducto.nombre =  nombre
+        componenteDeProducto.descripcion = descripcion
+        producto.save()
 
-        // Devuelve el componente actualizado
-        const componenteActualizado = producto.componentes.id(componenteId);
-        res.status(200).json(componenteActualizado);
+        res.status(200).json(componenteDeProducto);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: `Error al intentar actualizar Componente: "${error.message}"` });
     }
-
 }
 
+controller.deleteComponente = async(req, res) =>{
+    const producto = req.modelo || await Producto.findById(req.params.id);
+    const componenteId = req.params.idComponente; 
+    
+    try{
+        const componenteDeProducto = producto.componentes.id(componenteId)
+
+        if (!componenteDeProducto) {
+            return res.status(404).json({ mensaje: 'no se encontro el componente del producto' });
+        }
+        
+        producto.componentes = producto.componentes.filter(c => {
+            return c._id != componenteDeProducto._id
+        })
+        producto.save()
+        
+    }catch(error){
+        res.status(500).json({ error: `Error al intentar eliminar Componente: "${error.message}"` });
+        return
+    }
+    res.status(200).json("OK")
+}
 
 module.exports = controller
