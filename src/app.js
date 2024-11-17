@@ -12,8 +12,6 @@ app.use(express.json())
 app.use('/', rutas)
 
 
-
-
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
     console.log(`Iniciando servicio en puerto ${PORT}`)
