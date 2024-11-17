@@ -2,6 +2,7 @@
 - nodejs
 - express
 - mongoose
+- npm
 
 ## Requisitos
 - docker
@@ -39,9 +40,9 @@ Para iniciar un entorno de desarrollo con docker compose y hot reload seguir los
 
 ### Iniciar Entorno:
 1. editar archivo `.env`
-2. agregar la linea `COMPOSE_FILE=docker-compose.yml:docker-compose-dev.yml`
+2. agregar la linea `COMPOSE_FILE=docker-compose-dev.yml`
 3. iniciar instancia de bd: `docker compose up -d`
-4. Listo! la api estará disponible en el puerto especificado en el archivo `.env` y cualquire cambio en el código la reiniciará
+4. ejecutar `npm run dev`
  
 TIP: podés usar `docker compose logs -f api` para ver que está pasando 
 
