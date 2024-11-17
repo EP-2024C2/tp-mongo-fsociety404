@@ -26,6 +26,7 @@ MONGO_DB=productos
 ```
 o copie el archivo `.env-tamplate` a `.env` y realice las modifcaciones con los datos de conexión 
 
+5. Generar imágen docker: `docker compose build`
 4. Ejecutar servidor: `docker compose up -d`
 
 
@@ -36,13 +37,13 @@ Para iniciar un entorno de desarrollo con docker compose y hot reload seguir los
 * docker
 * docker compose
 
-#### Con instancia de BD de prueba `mysql`:
+### Iniciar Entorno:
 1. editar archivo `.env`
 2. agregar la linea `COMPOSE_FILE=docker-compose.yml:docker-compose-dev.yml`
 3. iniciar instancia de bd: `docker compose up -d`
 4. Listo! la api estará disponible en el puerto especificado en el archivo `.env` y cualquire cambio en el código la reiniciará
  
-
+TIP: podés usar `docker compose logs -f api` para ver que está pasando 
 
 ## Endpoints
 
