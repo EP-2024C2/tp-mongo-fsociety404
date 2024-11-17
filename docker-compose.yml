@@ -5,7 +5,7 @@ services:
     ports:
       - ${PORT:-3000}:3000
     environment:
-      MONGO_URL: ${MONGO_URL}
+      MONGO_URL: ${MONGO_URL:-mongodb:27017}
       MONGO_DB: ${MONGO_DB}
       MONGO_USERNAME: ${MONGO_USERNAME}
       MONGO_PASSWORD: ${MONGO_PASSWORD}
