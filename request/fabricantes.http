@@ -6,9 +6,10 @@ GET http://localhost:3000/fabricantes/:id
 
 ### Crear un fabricante
 POST http://localhost:3000/fabricantes
+Content-Type: application/json
 
 {
-    "nombre" :"fab1",
+    "nombre" :"fab3",
     "direccion" : "direccion1",
     "nroContacto" : "12312312",
     "pathImgPerfil": "fabricantes1.jpg"
@@ -16,6 +17,7 @@ POST http://localhost:3000/fabricantes
 
 ### Modificar un fabricante
 PUT http://localhost:3000/fabricantes/:id
+Content-Type: application/json
 
 {
     "nombre" :"fab1 ",
@@ -26,6 +28,9 @@ PUT http://localhost:3000/fabricantes/:id
 
 ### Eliminar un fabricante
 DELETE http://localhost:3000/fabricantes/:id
+Content-Type: application/json
 
 ### Obtener productos de un fabricante
-GET http://localhost:3000/fabricantes/:id/productos
+GET http://localhost:3000/fabricantes/6738ff13e969d57fabf6961b/productos
+
+

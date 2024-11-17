@@ -16,4 +16,4 @@ fabricanteSchema.set("toJSON", {
     }
 })
 
-module.exports = model('Fabricante', fabricanteSchema)
+module.exports = model('Fabricantes', fabricanteSchema)
