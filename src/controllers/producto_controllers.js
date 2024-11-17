@@ -81,8 +81,8 @@ controller.associateFabricanteAProductoById = async (req, res) => {
         return res.status(500).json({ error: `se espera una lista de IDs de fabricantes` })
     }
 
-    const fabricantesALiberar =  producto.fabricantes.filter(f => !fabricantes.some((p) => f._id.equals(p)));
-    const fabricantesAAgregar =  fabricantes.filter(p => !producto.fabricantes.some((f) => f._id.equals(p)));
+    const fabricantesALiberar = producto.fabricantes.filter(f => !fabricantes.some((p) => f._id.equals(p)));
+    const fabricantesAAgregar = fabricantes.filter(p => !producto.fabricantes.some((f) => f._id.equals(p)));
     try {
 
         // liberamos los fabricantes
@@ -134,7 +134,7 @@ controller.getAllFabricantesDeProducto = async (req, res) => {
     const idProducto = req.modelo || await Producto.findById(req.params.id);
     const fabricantes = await idProducto.populate({
         path: 'fabricantes',
-        select: '-productos' 
+        select: '-productos'
     });
 
     idProducto.componentes = undefined
@@ -217,7 +217,7 @@ controller.getAllComponentesDeProducto = async (req, res) => {
     // });
 
     // res.status(200).json(producto);
-    
+
 }
 
 // elimina la asociacion de componentes de un producto
@@ -233,6 +233,67 @@ controller.deleteAllComponentesDeProducto = async (req, res) => {
 
 
     // res.status(200).json({ message: 'OK' });
+}
+
+
+controller.getComponenteById = async (req, res) => {
+    const componente = req.modelo || await Componente.findById(req.params.id);
+    res.status(200).json(componente);
+}
+
+controller.addComponente = async (req, res) => {
+
+    const productoId = req.params.id
+    try {
+        const producto = await Producto.findByIdAndUpdate(
+            productoId,
+            { $push: { componentes: req.body } },  // Agrega el nuevo componente al array de componentes
+            { new: true }  // Para devolver el documento actualizado
+        )
+        res.status(201).json(producto.componentes[producto.componentes.length - 1])
+    } catch (error) {
+        res.status(500).json({ error: `error al intentar crear Componente: "${error}"` })
+    }
+}
+
+
+controller.updateComponente = async (req, res) => { //NO
+    // const { nombre, descripcion } = req.body;
+
+    // try {
+    //     const componente = await Componente.findByIdAndUpdate(req.params.id, {
+    //         nombre,
+    //         descripcion
+    //     }, { new: true });
+    //     res.status(200).json(componente)
+
+    // } catch (error) {
+    //     res.status(500).json({ error: `error al intentar actualizar Componente: "${error}"` })
+    // }
+    const productoId = req.params.id; // ID del producto
+    const componenteId = req.params.idComponente; // ID del componente
+
+    try {
+        // Encuentra el producto y actualiza el componente
+        const producto = await Producto.findOneAndUpdate(
+            { _id: productoId, "componentes._id": componenteId }, // Filtro
+            { $set: { "componentes.$": req.body } }, // Actualización del componente
+            { new: true } // Devuelve el documento actualizado
+        );
+
+        // Verifica si el producto o componente no fueron encontrados
+        if (!producto) {
+            return res.status(404).json({ mensaje: 'Producto o componente no encontrado' });
+        }
+
+        // Devuelve el componente actualizado
+        const componenteActualizado = producto.componentes.id(componenteId);
+        res.status(200).json(componenteActualizado);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: `Error al intentar actualizar Componente: "${error.message}"` });
+    }
+
 }
 
 

@@ -17,4 +17,9 @@ route.post('/:id/componentes', existsById(Producto), ProductoControllers.associa
 route.get('/:id/componentes', existsById(Producto), ProductoControllers.getAllComponentesDeProducto)
 route.delete('/:id/componentes', existsById(Producto), ProductoControllers.deleteAllComponentesDeProducto)
 
+route.get('/:id/componente/:id', existsById(Producto), ProductoControllers.getComponenteById)
+route.post('/:id/componente/', existsById(Producto), ProductoControllers.addComponente)
+route.put('/:id/componente/:id', existsById(Producto), ProductoControllers.updateComponente)
+
+
 module.exports = route

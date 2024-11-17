@@ -2,13 +2,16 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
+const componenteSchema = require('./componente_model');
+
+
 const productoSchema = new Schema({
     nombre: { type: String, required: true },
     descripcion: { type: String },
     precio: { type: Number, required: true },
     pathImg: { type: String },
     fabricantes: [{ type: Schema.Types.ObjectId, ref: 'Fabricantes', required: true }],
-    componentes: [{ type: Schema.Types.ObjectId, ref: 'Componentes', required: true }],
+    componentes: [componenteSchema]
 })
 
 productoSchema.set("toJSON", {
