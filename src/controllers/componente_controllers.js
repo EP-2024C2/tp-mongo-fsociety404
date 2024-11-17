@@ -49,12 +49,12 @@ controller.updateComponente = async (req, res) => {
 
 //borrar un componente en particular
 controller.deleteComponente = async (req, res) => {
-    // const componente = req.modelo || await Componente.findByPk(req.params.id);
-    // const cantProductosAsociados = await componente.countProductos()
-    // if(cantProductosAsociados > 0) {
-    //     res.status(400).json({ message: `no se puede eliminar un componente si tiene productos asociados` });
-    //     return
-    // }
+    const componente = req.modelo || await Fabricante.findById(req.params.id);
+    if(componente.productos.length > 0) {
+        res.status(500).json({ error: "no se puede eliminar un compnente si tiene productos asociados" });
+        return
+    }
+
     try {
         await Componente.findByIdAndDelete(req.params.id );
         res.status(200).json({ message: 'OK' });
@@ -65,12 +65,14 @@ controller.deleteComponente = async (req, res) => {
 
 // obtiene los productos de un componente
 controller.getAllProductosDeComponente = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });
-    // const idComponente = req.params.id
-    // const componente = await Componente.findByPk(idComponente, {
-    //     include: { model: Producto, as: "Productos" }
-    // });
-    // res.status(200).json(componente);
+    const componente = req.modelo || await Componente.findById(req.params.id);
+    const componenteConProductos = await componente.populate({
+        path: 'productos',
+        select: '-fabricantes -componentes'
+    });
+
+
+    res.status(200).json(componenteConProductos);
 }
 
 module.exports = controller

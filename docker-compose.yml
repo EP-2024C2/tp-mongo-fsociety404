@@ -1,6 +1,6 @@
 services:
   api:
-    image: api-procuctos
+    image: api-productos
     build: .
     ports:
       - ${PORT:-3000}:3000
