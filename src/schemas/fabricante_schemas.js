@@ -13,11 +13,11 @@ const fabricanteSchema = Joi.object().keys({
         "string.empty": "El campo descripcion no puede ser vacío",
         "any.required": "El campo descripcion es requerido"
     }),
-    numeroContacto: Joi.number().required().messages({
+    nroContacto: Joi.number().required().messages({
         "number.integer": "El campo numeroContacto debe ser un número entero",
         "any.required": "El campo numeroContacto es requerido"
     }),
-    pathImgPerfil: Joi.string().uri().messages({
+    pathImgPerfil: Joi.string().messages({
         "string.uri": "El campo pathImgPerfil debe ser una URL válida",
     }),
 });

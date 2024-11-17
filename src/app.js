@@ -4,13 +4,13 @@ const process = require('process')
 
 const express = require('express')
 const rutas = require('./routes')
+const mongodb = require('./db/server')
 
 
 const app = express()
 app.use(express.json())
 app.use('/', rutas)
 
-// TODO: conectar a la BD
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {

@@ -6,13 +6,16 @@ GET http://localhost:3000/productos/:id
 
 ### Crear un producto
 POST http://localhost:3000/productos
+Content-Type: application/json
+
 {
-    "nombre":"nombre1",
-    "precio": 150
+    "nombre": "producto 3",
+    "precio": 400
 }
 
 ### Modificar un producto
 PUT http://localhost:3000/productos/:id
+Content-Type: application/json
 {
     "nombre":"nombre1",
     "precio": 200
@@ -20,11 +23,16 @@ PUT http://localhost:3000/productos/:id
 
 ### Eliminar un producto
 DELETE http://localhost:3000/productos/:id
+Content-Type: application/json
 
 ### Crear un fabricante para un producto
-POST  http://localhost:3000/productos/:id/fabricantes
+POST  http://localhost:3000/productos/6738fed7e969d57fabf69613/fabricantes
+Content-Type: application/json
 
-    ###especificar asosiacion
+[
+    "6738ff13e969d57fabf6961b",
+    "6738ff17e969d57fabf6961d"
+]
 
 
 ## Obtener fabricantes de un producto
@@ -32,6 +40,7 @@ GET http://localhost:3000/productos/:id/fabricantes
 
 ### Crear un componente para un producto
 POST http://localhost:3000/productos/:id/componentes
+Content-Type: application/json
 
     ###especificar asosiacion
 

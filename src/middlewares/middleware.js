@@ -1,15 +1,21 @@
 const existsById = (Model) => {
-    // TODO: implementar existsById
     return async (req, res, next) => {
-        // const id = req.params.id
-        // const model = await Model.findByPk(id)
-        // const modelName = Model.modelName || (Model.options.name && Model.options.name.singular);
-        // if (!model) {
-        //     return res.status(404).json({
-        //         message: `El ${modelName} con id ${id} no fue encontrado`
-        //     })
-        // }
-        // req.modelo = model
+        const id = req.params.id
+        const modelName = Model.modelName
+
+        if (id.length !== 24 ) {
+            return res.status(400).json({
+                message: `El id proporcionado para ${modelName} no es válido`
+            })
+        }
+        
+        const model = await Model.findById(id)
+        if (!model) {
+            return res.status(404).json({
+                message: `El ${modelName} con id ${id} no fue encontrado`
+            })
+        }
+        req.modelo = model
         next()
     }
 }
