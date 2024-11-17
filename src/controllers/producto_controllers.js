@@ -52,17 +52,16 @@ controller.updateProducto = async (req, res) => {
 
 //borrar un producto en particular
 controller.deleteProducto = async (req, res) => {
-    // const modelo = req.modelo || await Producto.findByPk(req.params.id);
-    // const cantComponentesAsociados = await modelo.countComponentes()
-    // if(cantComponentesAsociados > 0) {
-    //     res.status(400).json({ message: `no se puede eliminar un producto si tiene componentes asociados` });
-    //     return
-    // }
-    // const cantFabricantesAsociados = await modelo.countFabricantes()
-    // if(cantFabricantesAsociados > 0) {
-    //     res.status(400).json({ message: `no se puede eliminar un producto si tiene fabricantes asociados` });
-    //     return
-    // }
+    const producto = req.modelo || await Producto.findById(req.params.id);
+    if(producto.componentes.length > 0) {
+        res.status(500).json({ error: "no se puede eliminar un producto si tiene componentes asociados" });
+        return
+    }
+
+    if(producto.fabricantes.length > 0) {
+        res.status(500).json({ error: "no se puede eliminar un producto si tiene componentes asociados" });
+        return
+    }
 
     try {
         await Producto.findByIdAndDelete(req.params.id);
@@ -87,7 +86,6 @@ controller.associateFabricanteAProductoById = async (req, res) => {
 
         // liberamos los fabricantes
         for (const idFabricante of fabricantesALiberar) {
-            console.log(idFabricante)
             await Fabricante.updateOne(
                 { _id: idFabricante },
                 { $pull: { productos: producto._id } },
@@ -125,12 +123,6 @@ controller.associateFabricanteAProductoById = async (req, res) => {
 
 // obtiene los fabricantes de un producto
 controller.getAllFabricantesDeProducto = async (req, res) => {
-    //const producto = req.modelo || await Producto.findById(req.params.id);
-    // const idProducto = req.params.id
-    // const producto = await Producto.findByPk(idProducto, {
-    //     include: { model: Fabricante, as: "Fabricantes" }
-    // });
-    // res.status(200).json(producto);
     const idProducto = req.modelo || await Producto.findById(req.params.id);
     const fabricantes = await idProducto.populate({
         path: 'fabricantes',
@@ -145,16 +137,24 @@ controller.getAllFabricantesDeProducto = async (req, res) => {
 
 // elimina la asociacion de fabricantes de un producto
 controller.deleteAllFabricatesDeProducto = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });
-    // const modelo = req.modelo || await Producto.findByPk(req.params.id);
-    // try {
-    //     await modelo.setFabricantes([])
-    // } catch(e) {
-    //     res.status(500).json({ error: `error al desasociar fabricantes de un producto: ${e}` })
-    //     return
-    // }
+    const producto = req.modelo || await Producto.findById(req.params.id);
 
-    // res.status(200).json({ message: 'OK' });
+    try {
+        for (const idFabricante of producto.fabricantes) {
+            await Fabricante.updateOne(
+                { _id: idFabricante },
+                { $pull: { productos: producto._id } },
+            );
+            await Producto.updateOne(
+                { _id: producto._id },
+                { $pull: { fabricantes: idFabricante } },
+            );
+        }
+    
+    } catch(e) {
+        return res.status(500).json({ error: `error al eliminar asociación: ${e}` })
+    }
+    res.status(200).json({ message: 'OK' });
 }
 
 
@@ -210,11 +210,11 @@ controller.associateComponenteAProductoById = async (req, res) => {
 
 // obtiene los componentes de un producto
 controller.getAllComponentesDeProducto = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });
-    // const idProducto = req.params.id
-    // const producto = await Producto.findByPk(idProducto, {
-    //     include: { model: Componente, as: "Componentes" }
-    // });
+    const idProducto = req.modelo || await Producto.findById(req.params.id);
+    const componentes = await idProducto.populate({
+        path: 'componentes',
+        select: '-productos' 
+    });
 
     // res.status(200).json(producto);
 
@@ -222,17 +222,24 @@ controller.getAllComponentesDeProducto = async (req, res) => {
 
 // elimina la asociacion de componentes de un producto
 controller.deleteAllComponentesDeProducto = async (req, res) => {
-    res.status(501).json({ error: "no implementado" });
-    // const modelo = req.modelo || await Producto.findByPk(req.params.id);
-    // try {
-    //     await modelo.setComponentes([])
-    // } catch(e) {
-    //     res.status(500).json({ error: `error al desasociar componentes de un producto: ${e}` })
-    //     return
-    // }
+    const producto = req.modelo || await Producto.findById(req.params.id);
 
-
-    // res.status(200).json({ message: 'OK' });
+    try {
+        for (const idComponente of producto.componentes) {
+            await Componente.updateOne(
+                { _id: idComponente },
+                { $pull: { productos: producto._id } },
+            );
+            await Producto.updateOne(
+                { _id: producto._id },
+                { $pull: { componentes: idComponente } },
+            );
+        }
+    
+    } catch(e) {
+        return res.status(500).json({ error: `error al eliminar asociación: ${e}` })
+    }
+    res.status(200).json({ message: 'OK' });
 }
 
 

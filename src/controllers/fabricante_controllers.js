@@ -55,36 +55,32 @@ controller.updateFabricante = async (req, res) => {
 
 // permite eliminar un fabricante
 controller.deleteFabricante = async (req, res) => {
-    // const fabricante = req.modelo || await Fabricante.findById(req.params.id);
-    //const cantProductosAsociados = await fabricante.countProductos()
-    // if(cantProductosAsociados > 0) {
-    //     res.status(400).json({ message: `no se puede eliminar un fabricante si tiene productos asociados` });
-    //     return
-    // }
+    const fabricante = req.modelo || await Fabricante.findById(req.params.id);
+    if(fabricante.productos.length > 0) {
+        res.status(500).json({ error: "no se puede eliminar un fabricante si tiene productos asociados" });
+        return
+    }
 
     try {
         await Fabricante.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: 'OK' });
     } catch (error) {
         res.status(500).json({ error: error.message });
+        return
     }
+    res.status(200).json({ message: 'OK' });
 }
 
 
 // obtiene los productos de un fabricante
 controller.getAllProductosDeFabricante = async (req, res) => { 
-    // const idFabricante = req.params.id
-    // const fabricante = await Fabricante.findByPk(idFabricante, {
-    //     include: { model: Producto, as: "Productos" }
-    // });
-    // res.status(200).json(fabricante);
-    const idFabricante = req.modelo || await Fabricante.findById(req.params.id);
-    const productos = await idFabricante.populate({
+    const fabricante = req.modelo || await Fabricante.findById(req.params.id);
+    const fabricantesConproductos = await fabricante.populate({
         path: 'productos',
-        select: '-fabricantes'
+        select: '-fabricantes -componentes'
     });
 
-    res.status(200).json(productos);
+
+    res.status(200).json(fabricantesConproductos);
 }
 
 module.exports = controller
